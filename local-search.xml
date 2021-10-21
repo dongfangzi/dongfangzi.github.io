@@ -83,6 +83,17 @@
   
   
   <entry>
+    <title>guide</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>books</title>
     <link href="/"/>
     <url>/</url>
@@ -94,29 +105,18 @@
   
   
   <entry>
+    <title>icon</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>links</title>
-    <link href="/"/>
-    <url>/</url>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>others</title>
-    <link href="/"/>
-    <url>/</url>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>tags</title>
     <link href="/"/>
     <url>/</url>
     
@@ -149,18 +149,7 @@
   
   
   <entry>
-    <title></title>
-    <link href="/"/>
-    <url>/</url>
-    
-    <content type="html"><![CDATA[<p>我的个人<a href="https://hexo.io/">hexo博客</a>,使用了<a href="https://github.com/fluid-dev/hexo-theme-fluid">fluid主题</a></p><p>记录一些学习心得</p><p><strong>计划主要学习方向：</strong></p><ol><li><p>前端</p></li><li><p>Python</p></li><li><p>Java</p></li></ol><p><strong>目标：</strong></p><ol><li><p>“造轮子”：静态博客管理系统，手机浏览器，手机视频软件等</p><p>静态网站管理：</p><p>手机浏览器：</p><p>手机视频：</p></li><li><p>完成一个唤境游戏，并上架TAPTAP或者好游快爆.<br><a href="https://www.evkworld.com/">唤境</a></p><img src="https://bkimg.cdn.bcebos.com/pic/0dd7912397dda144e32f49c1bcb7d0a20cf4869a?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UyNzI=,g_7,xp_5,yp_5" alt="img" style="zoom:25%;" /></li><li><p>利用人工智能 完成人工智障<br>学习…</p></li></ol><p><strong>成果</strong></p>]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>guide</title>
+    <title>others</title>
     <link href="/"/>
     <url>/</url>
     
@@ -171,7 +160,7 @@
   
   
   <entry>
-    <title>icon</title>
+    <title>tags</title>
     <link href="/"/>
     <url>/</url>
     
