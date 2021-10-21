@@ -72,6 +72,17 @@
   
   
   <entry>
+    <title>links</title>
+    <link href="/"/>
+    <url>/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>books</title>
     <link href="/"/>
     <url>/</url>
@@ -84,17 +95,6 @@
   
   <entry>
     <title>about</title>
-    <link href="/"/>
-    <url>/</url>
-    
-    <content type="html"><![CDATA[]]></content>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>links</title>
     <link href="/"/>
     <url>/</url>
     
