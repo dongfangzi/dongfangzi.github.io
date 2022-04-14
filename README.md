@@ -1,4 +1,5 @@
 我的个人[hexo博客](https://hexo.io/),使用了[fluid主题](https://github.com/fluid-dev/hexo-theme-fluid)
+[博客地址](http://dongfangzi.github.io)
 
 记录一些学习心得
 
