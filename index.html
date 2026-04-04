@@ -1,625 +1,1286 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
-
-
-
+<html lang="zh-CN" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="东方紫">
-  <meta name="keywords" content="">
-  
-  <title>东方紫小站</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>东方紫小站 · 个人博客</title>
+<style>
+/* ═══════════════════════════════════════════
+   CSS 变量 & 主题
+═══════════════════════════════════════════ */
+:root {
+  --bg:        #0d1117;
+  --bg2:       #161b22;
+  --bg3:       #1c2333;
+  --border:    rgba(139,148,158,0.15);
+  --accent:    #7c3aed;
+  --accent2:   #a78bfa;
+  --accent3:   #c4b5fd;
+  --pink:      #ec4899;
+  --cyan:      #22d3ee;
+  --green:     #10b981;
+  --yellow:    #f59e0b;
+  --text:      #e6edf3;
+  --text2:     #8b949e;
+  --text3:     #6e7681;
+  --card-bg:   rgba(22,27,34,0.9);
+  --radius:    14px;
+  --shadow:    0 8px 32px rgba(0,0,0,0.5);
+  --glow:      0 0 40px rgba(124,58,237,0.2);
+}
+[data-theme="light"] {
+  --bg:       #f6f8fa;
+  --bg2:      #ffffff;
+  --bg3:      #eef1f5;
+  --border:   rgba(0,0,0,0.1);
+  --accent:   #7c3aed;
+  --accent2:  #6d28d9;
+  --text:     #1f2328;
+  --text2:    #57606a;
+  --text3:    #8c959f;
+  --card-bg:  rgba(255,255,255,0.95);
+  --shadow:   0 4px 20px rgba(0,0,0,0.1);
+  --glow:     0 0 40px rgba(124,58,237,0.08);
+}
 
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+/* ═══════════════════════════════════════════
+   Reset & Base
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; }
 
+/* ═══════════════════════════════════════════
+   阅读进度条
+═══════════════════════════════════════════ */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--pink), var(--cyan));
+  z-index: 9999;
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
 
+/* ═══════════════════════════════════════════
+   星空背景
+═══════════════════════════════════════════ */
+#stars-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+[data-theme="light"] #stars-canvas { opacity: 0.1; }
 
-<!-- 主题依赖的图标库，不要自行修改 -->
+/* ═══════════════════════════════════════════
+   顶栏 Navbar
+═══════════════════════════════════════════ */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(13,17,23,0.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+[data-theme="light"] .navbar { background: rgba(246,248,250,0.85); }
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+.nav-logo {
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent2), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+}
 
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.nav-links a:hover {
+  color: var(--text);
+  background: rgba(124,58,237,0.1);
+}
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+/* 搜索框 */
+.search-wrap {
+  position: relative;
+}
+.search-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 6px 14px 6px 34px;
+  width: 180px;
+  outline: none;
+  transition: all 0.3s;
+}
+[data-theme="light"] .search-input { background: rgba(0,0,0,0.04); }
+.search-input::placeholder { color: var(--text3); }
+.search-input:focus {
+  width: 220px;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.15);
+  background: rgba(255,255,255,0.07);
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  font-size: 14px;
+  pointer-events: none;
+}
 
+/* 主题切换按钮 */
+.theme-btn {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.theme-btn:hover { background: rgba(124,58,237,0.15); color: var(--accent2); border-color: var(--accent); }
 
-<link  rel="stylesheet" href="/css/main.css" />
+/* ═══════════════════════════════════════════
+   搜索结果面板
+═══════════════════════════════════════════ */
+#search-results {
+  display: none;
+  position: fixed;
+  top: 70px;
+  right: 32px;
+  width: 340px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 200;
+  overflow: hidden;
+  animation: fadeDown 0.2s ease;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.search-result-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: rgba(124,58,237,0.08); }
+.search-result-item h4 { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+.search-result-item p  { font-size: 11px; color: var(--text2); line-height: 1.5; }
+.search-result-item .match { color: var(--accent2); font-weight: 600; }
+.search-empty { padding: 24px; text-align: center; color: var(--text2); font-size: 13px; }
 
-<!-- 自定义样式保持在最底部 -->
+/* ═══════════════════════════════════════════
+   Hero 区域
+═══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 32px 60px;
+}
 
-  
-<link rel="stylesheet" href="/css/_page/others.css">
+.hero-content {
+  text-align: center;
+  max-width: 680px;
+}
 
+/* 头像 */
+.avatar-ring {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 28px;
+  position: relative;
+  cursor: pointer;
+}
+.avatar-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent), var(--pink), var(--cyan), var(--accent));
+  animation: spin 4s linear infinite;
+  z-index: -1;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.avatar-ring::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent), var(--pink), var(--cyan), var(--accent));
+  opacity: 0.3;
+  filter: blur(8px);
+  animation: spin 4s linear infinite reverse;
+  z-index: -2;
+}
+.avatar-img {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--bg);
+  background: linear-gradient(135deg, #1e1b4b, #312e81);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  user-select: none;
+}
+.avatar-emoji {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e1b4b, #4c1d95);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px;
+  border: 3px solid var(--bg);
+}
 
+.hero-greeting {
+  font-size: 14px;
+  color: var(--accent2);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-title {
+  font-size: clamp(32px, 6vw, 54px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.hero-title .gradient {
+  background: linear-gradient(135deg, var(--accent2), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-desc {
+  font-size: 16px;
+  color: var(--text2);
+  margin-bottom: 32px;
+  line-height: 1.8;
+}
 
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    var CONFIG = {"hostname":"dongfangzi.github.io","root":"/","version":"1.8.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-<meta name="generator" content="Hexo 5.4.0"></head>
+/* 打字机效果 */
+.typewriter {
+  display: inline-block;
+  border-right: 2px solid var(--accent2);
+  animation: blink 0.8s step-end infinite;
+  min-width: 2px;
+}
+@keyframes blink { 0%,100%{border-color:transparent} 50%{border-color:var(--accent2)} }
 
+/* 标签 */
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.tag {
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: default;
+}
+.tag:hover { transform: translateY(-2px); }
+.tag-purple { border-color: rgba(124,58,237,0.4); color: var(--accent2); background: rgba(124,58,237,0.1); }
+.tag-pink   { border-color: rgba(236,72,153,0.4); color: #f9a8d4; background: rgba(236,72,153,0.1); }
+.tag-cyan   { border-color: rgba(34,211,238,0.4); color: #67e8f9; background: rgba(34,211,238,0.1); }
+.tag-green  { border-color: rgba(16,185,129,0.4); color: #6ee7b7; background: rgba(16,185,129,0.1); }
+.tag-yellow { border-color: rgba(245,158,11,0.4); color: #fcd34d; background: rgba(245,158,11,0.1); }
 
+/* 按钮组 */
+.hero-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #5b21b6);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.5); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent2); background: rgba(124,58,237,0.08); }
+
+/* 滚动提示箭头 */
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text3);
+  font-size: 22px;
+  animation: bounce 2s ease-in-out infinite;
+  cursor: pointer;
+}
+@keyframes bounce {
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(8px)}
+}
+
+/* ═══════════════════════════════════════════
+   主内容区
+═══════════════════════════════════════════ */
+.main { position: relative; z-index: 1; }
+.section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 80px 32px;
+}
+
+.section-header {
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+.section-title span {
+  background: linear-gradient(135deg, var(--accent2), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ═══════════════════════════════════════════
+   文章卡片
+═══════════════════════════════════════════ */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all 0.3s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--pink));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+.post-card:hover { transform: translateY(-4px); box-shadow: var(--shadow), var(--glow); border-color: rgba(124,58,237,0.3); }
+.post-card:hover::before { transform: scaleX(1); }
+
+.post-card .post-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+.post-card .post-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.post-card .post-excerpt {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.7;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.post-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text3);
+}
+.post-date { display: flex; align-items: center; gap: 5px; }
+.post-tags-list { display: flex; gap: 6px; }
+.post-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(124,58,237,0.1);
+  color: var(--accent2);
+  border: 1px solid rgba(124,58,237,0.2);
+}
+
+/* ═══════════════════════════════════════════
+   技能区
+═══════════════════════════════════════════ */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.skill-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+}
+.skill-card:hover { border-color: rgba(124,58,237,0.3); transform: translateY(-2px); }
+
+.skill-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.skill-icon { font-size: 22px; }
+.skill-name { font-size: 14px; font-weight: 600; }
+
+.skill-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.skill-fill {
+  height: 100%;
+  border-radius: 3px;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.skill-level { font-size: 11px; color: var(--text3); text-align: right; }
+
+/* ═══════════════════════════════════════════
+   统计数字区
+═══════════════════════════════════════════ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 80px;
+}
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+}
+.stat-card:hover { border-color: rgba(124,58,237,0.3); }
+.stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent2), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 12px; color: var(--text2); }
+
+/* ═══════════════════════════════════════════
+   时间线 / 关于
+═══════════════════════════════════════════ */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -28px; top: 5px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 10px var(--accent);
+}
+.tl-date { font-size: 12px; color: var(--accent2); margin-bottom: 4px; font-weight: 600; }
+.tl-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.tl-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+/* ═══════════════════════════════════════════
+   目标/计划区
+═══════════════════════════════════════════ */
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.goal-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.goal-card:hover { border-color: rgba(124,58,237,0.3); transform: translateX(4px); }
+.goal-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.goal-text h4 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.goal-text p  { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.goal-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+  display: inline-block;
+}
+.status-wip  { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+.status-plan { background: rgba(99,102,241,0.12); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+.status-done { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+
+/* ═══════════════════════════════════════════
+   联系 / Footer
+═══════════════════════════════════════════ */
+.contact-section {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 80px 32px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.contact-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.contact-section p {
+  color: var(--text2);
+  font-size: 14px;
+  margin-bottom: 36px;
+}
+.social-links {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.social-link:hover { border-color: var(--accent); color: var(--accent2); background: rgba(124,58,237,0.08); transform: translateY(-2px); }
+.social-link .s-icon { font-size: 18px; }
+
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 24px 32px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text3);
+  position: relative;
+  z-index: 1;
+}
+footer a { color: var(--accent2); }
+
+/* ═══════════════════════════════════════════
+   回到顶部按钮
+═══════════════════════════════════════════ */
+#back-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #5b21b6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.3s;
+  z-index: 500;
+}
+#back-top.visible { opacity: 1; transform: translateY(0); }
+#back-top:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(124,58,237,0.5); }
+
+/* ═══════════════════════════════════════════
+   通知 Toast
+═══════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 88px;
+  right: 32px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  z-index: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   入场动画
+═══════════════════════════════════════════ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   响应式
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar { padding: 0 16px; }
+  .nav-links { display: none; }
+  .search-input { width: 140px; }
+  .hero { padding: 80px 20px 60px; }
+  .section { padding: 60px 20px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  #back-top { bottom: 20px; right: 20px; }
+  #toast { right: 20px; bottom: 76px; }
+}
+@media (max-width: 480px) {
+  .posts-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .search-input { width: 110px; }
+  .search-input:focus { width: 140px; }
+}
+</style>
+</head>
 <body>
-  <header style="height: 100vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>东方紫小站</strong>&nbsp;</a>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
+<!-- 阅读进度条 -->
+<div id="progress-bar"></div>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/links/">
-                <i class="iconfont icon-link-fill"></i>
-                友链
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/others/">
-                <i class="iconfont icon-others-fill"></i>
-                其他
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                
-                娱乐
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                
-                  
-                  
-                  
-                  <a class="dropdown-item" href="/music/">
-                    <i class="iconfont icon-music-fill"></i>
-                    音乐
-                  </a>
-                
-                  
-                  
-                  
-                  <a class="dropdown-item" href="/books/">
-                    <i class="iconfont icon-books-fill"></i>
-                    书籍
-                  </a>
-                
-                  
-                  
-                  
-                  <a class="dropdown-item" href="/movies/">
-                    <i class="iconfont icon-movies-fill"></i>
-                    影视
-                  </a>
-                
-              </div>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
+<!-- 星空背景 -->
+<canvas id="stars-canvas"></canvas>
+
+<!-- ─── Navbar ─── -->
+<nav class="navbar">
+  <div class="nav-logo">东方紫小站</div>
+  <ul class="nav-links">
+    <li><a href="#posts">文章</a></li>
+    <li><a href="#skills">技能</a></li>
+    <li><a href="#goals">目标</a></li>
+    <li><a href="#about">关于</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="search-input" placeholder="搜索文章..." autocomplete="off">
     </div>
+    <button class="theme-btn" id="theme-btn" title="切换主题">🌙</button>
   </div>
 </nav>
 
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="人生如逆旅，你我皆行人">
-              
-            </span>
+<!-- 搜索结果面板 -->
+<div id="search-results"></div>
 
-            
-          </div>
+<!-- ─── Hero ─── -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="avatar-ring">
+      <div class="avatar-emoji">🧑‍💻</div>
+    </div>
+    <div class="hero-greeting">Hello, World!</div>
+    <h1 class="hero-title">
+      我是 <span class="gradient">东方紫</span><br>
+      <span class="typewriter" id="typewriter"></span>
+    </h1>
+    <p class="hero-desc">
+      一名热爱编程的独立开发者<br>
+      专注于前端、Python 与 Java，正在探索游戏开发与 AI 应用
+    </p>
+    <div class="hero-tags">
+      <span class="tag tag-purple">⚡ 前端开发</span>
+      <span class="tag tag-cyan">🐍 Python</span>
+      <span class="tag tag-green">☕ Java</span>
+      <span class="tag tag-pink">🎮 游戏开发</span>
+      <span class="tag tag-yellow">🤖 AI 学习</span>
+    </div>
+    <div class="hero-btns">
+      <a href="#posts" class="btn btn-primary">📖 阅读文章</a>
+      <a href="#about" class="btn btn-outline">👤 了解更多</a>
+    </div>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('posts').scrollIntoView({behavior:'smooth'})">↓</div>
+</section>
 
-          
-            <div class="scroll-down-bar">
-              <i class="iconfont icon-arrowdown"></i>
-            </div>
-          
+<!-- ─── Main ─── -->
+<main class="main">
+
+  <!-- 统计数字 -->
+  <div class="section" style="padding-bottom:0">
+    <div class="stats-row fade-in">
+      <div class="stat-card">
+        <div class="stat-num" data-target="5">0</div>
+        <div class="stat-label">📝 博客文章</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-target="3">0</div>
+        <div class="stat-label">💻 技术方向</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-target="2020">0</div>
+        <div class="stat-label">📅 开始年份</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" data-target="∞" data-special="true">∞</div>
+        <div class="stat-label">🚀 学习热情</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文章列表 -->
+  <section class="section" id="posts">
+    <div class="section-header fade-in">
+      <h2 class="section-title">最新 <span>文章</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="posts-grid" id="posts-grid">
+
+      <article class="post-card fade-in" data-title="学习板绘" data-tags="绘画,教程" onclick="window.open('https://dongfangzi.github.io/2021/04/05/%E5%AD%A6%E4%B9%A0%E6%9D%BF%E7%BB%98/')">
+        <span class="post-icon">🎨</span>
+        <div class="post-title">学习板绘资源整理</div>
+        <div class="post-excerpt">整理了 B 站上板绘学习的优质资源，涵盖 PS、SAI、Procreate 等工具教程，以及基础观察与用笔技法的视频合集。</div>
+        <div class="post-meta">
+          <span class="post-date">📅 2021-04-05</span>
+          <div class="post-tags-list"><span class="post-tag">绘画</span><span class="post-tag">教程</span></div>
+        </div>
+      </article>
+
+      <article class="post-card fade-in" data-title="Hello World" data-tags="随笔" onclick="window.open('https://dongfangzi.github.io/2021/04/05/hello-world/')">
+        <span class="post-icon">👋</span>
+        <div class="post-title">Hello World</div>
+        <div class="post-excerpt">博客的第一篇 Hexo 示例文章。欢迎来到东方紫小站！这里将记录我的学习历程与技术探索。</div>
+        <div class="post-meta">
+          <span class="post-date">📅 2021-04-05</span>
+          <div class="post-tags-list"><span class="post-tag">随笔</span></div>
+        </div>
+      </article>
+
+      <article class="post-card fade-in" data-title="Markdown基础语法" data-tags="Markdown,教程" onclick="window.open('https://dongfangzi.github.io/2020/07/02/Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/')">
+        <span class="post-icon">📝</span>
+        <div class="post-title">Markdown 基础语法</div>
+        <div class="post-excerpt">系统整理 Markdown 的常用语法，包含标题、段落、列表、代码块、链接、图片和表格等核心用法，适合初学者快速上手。</div>
+        <div class="post-meta">
+          <span class="post-date">📅 2020-07-02</span>
+          <div class="post-tags-list"><span class="post-tag">Markdown</span><span class="post-tag">教程</span></div>
+        </div>
+      </article>
+
+      <article class="post-card fade-in" data-title="Python turtle库特别案例" data-tags="Python,编程" onclick="window.open('https://dongfangzi.github.io/2020/07/02/Python%E4%B8%AD%E7%9A%84turtle%E5%BA%93%E7%89%B9%E5%88%AB%E6%A1%88%E4%BE%8B/')">
+        <span class="post-icon">🐢</span>
+        <div class="post-title">Python 中的 turtle 库特别案例</div>
+        <div class="post-excerpt">介绍 Python turtle 图形库，从基础方法到进阶案例，包含绘制分形树等精彩示例，附官方文档与离线版参考资料。</div>
+        <div class="post-meta">
+          <span class="post-date">📅 2020-07-02</span>
+          <div class="post-tags-list"><span class="post-tag">Python</span><span class="post-tag">编程</span></div>
+        </div>
+      </article>
+
+      <article class="post-card fade-in" data-title="第一篇博客" data-tags="随笔" onclick="window.open('https://dongfangzi.github.io/2020/07/01/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/')">
+        <span class="post-icon">🌟</span>
+        <div class="post-title">第一篇博客</div>
+        <div class="post-excerpt">个人学习记录博客的开篇。现阶段主要学习 Python、Java、前端，项目尝试发布到个人博客和 B 站，源码上传到 GitHub。</div>
+        <div class="post-meta">
+          <span class="post-date">📅 2020-07-01</span>
+          <div class="post-tags-list"><span class="post-tag">随笔</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- 技能展示 -->
+  <section class="section" id="skills" style="background:rgba(255,255,255,0.01)">
+    <div class="section-header fade-in">
+      <h2 class="section-title">技术 <span>栈</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid" id="skills-grid">
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">⚛️</span><span class="skill-name">前端开发</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#7c3aed,#a78bfa)" data-w="72"></div></div>
+        <div class="skill-level">进阶中 · 72%</div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">🐍</span><span class="skill-name">Python</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#0ea5e9,#22d3ee)" data-w="78"></div></div>
+        <div class="skill-level">熟练 · 78%</div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">☕</span><span class="skill-name">Java</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#f59e0b,#fcd34d)" data-w="60"></div></div>
+        <div class="skill-level">学习中 · 60%</div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">🎮</span><span class="skill-name">游戏开发</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#ec4899,#f9a8d4)" data-w="45"></div></div>
+        <div class="skill-level">探索中 · 45%</div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">🤖</span><span class="skill-name">AI / ML</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#10b981,#6ee7b7)" data-w="40"></div></div>
+        <div class="skill-level">入门 · 40%</div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-header"><span class="skill-icon">🎨</span><span class="skill-name">数字绘画</span></div>
+        <div class="skill-bar"><div class="skill-fill" style="background:linear-gradient(90deg,#8b5cf6,#c4b5fd)" data-w="55"></div></div>
+        <div class="skill-level">爱好 · 55%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 目标计划 -->
+  <section class="section" id="goals">
+    <div class="section-header fade-in">
+      <h2 class="section-title">目标 <span>计划</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="goals-grid">
+      <div class="goal-card fade-in">
+        <div class="goal-icon">📦</div>
+        <div class="goal-text">
+          <h4>静态博客管理系统</h4>
+          <p>开发一套可视化的 Hexo 博客管理界面，让写作和发布更加简单高效。</p>
+          <span class="goal-status status-wip">🔨 开发中</span>
+        </div>
+      </div>
+      <div class="goal-card fade-in">
+        <div class="goal-icon">📱</div>
+        <div class="goal-text">
+          <h4>手机浏览器</h4>
+          <p>打造一款轻量、简洁、隐私友好的移动端浏览器应用。</p>
+          <span class="goal-status status-plan">💡 规划中</span>
+        </div>
+      </div>
+      <div class="goal-card fade-in">
+        <div class="goal-icon">🎮</div>
+        <div class="goal-text">
+          <h4>唤境 · 独立游戏</h4>
+          <p>完成一款独立游戏并上架 TapTap 或好游快爆，将创意变为现实。</p>
+          <span class="goal-status status-wip">🔨 开发中</span>
+        </div>
+      </div>
+      <div class="goal-card fade-in">
+        <div class="goal-icon">🤖</div>
+        <div class="goal-text">
+          <h4>AI 辅助学习工具</h4>
+          <p>利用人工智能打造个人化学习助手，提升知识吸收效率。</p>
+          <span class="goal-status status-plan">💡 规划中</span>
+        </div>
+      </div>
+      <div class="goal-card fade-in">
+        <div class="goal-icon">🎬</div>
+        <div class="goal-text">
+          <h4>手机视频软件</h4>
+          <p>开发支持多格式、离线缓存的移动端视频播放应用。</p>
+          <span class="goal-status status-plan">💡 规划中</span>
+        </div>
+      </div>
+      <div class="goal-card fade-in">
+        <div class="goal-icon">✅</div>
+        <div class="goal-text">
+          <h4>搭建个人博客</h4>
+          <p>基于 Hexo + Fluid 主题，完成个人博客的搭建与部署。</p>
+          <span class="goal-status status-done">✅ 已完成</span>
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main>
-    
-      <div class="container nopadding-x-md">
-        <div class="py-5" id="board"
-          style=margin-top:0>
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/05/%E5%AD%A6%E4%B9%A0%E6%9D%BF%E7%BB%98/"></a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/04/05/%E5%AD%A6%E4%B9%A0%E6%9D%BF%E7%BB%98/">
-          
-          
-            
-          
-          B站学习画画来自B站视频av455574336
-一、工具技法PS：1、 BV1NE411r7GU 2、 BV15s411u79u 3、 BV1Ds41197U9SAI：1、BV1cx411b769 2、BV1ix411k7BNProcreate：BV1N7411b7dP
-二、基础观察：像艺术家一样思考BV16a4y1t7sN BV1TW411y7dL BV1ax411r7QD 用笔：我的教程BV1
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-05 14:19" pubdate>
-              2021-04-05
-            </time>
-          </div>
-        
-        
-        
+  <!-- 关于 / 时间线 -->
+  <section class="section" id="about">
+    <div class="section-header fade-in">
+      <h2 class="section-title">关于 <span>我</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+      <div class="fade-in">
+        <p style="color:var(--text2);line-height:1.9;font-size:14px;margin-bottom:20px">
+          👋 嗨，我是<strong style="color:var(--text)">东方紫</strong>，一名热爱技术与创作的独立开发者。从 2020 年开始，我将自己的学习历程记录在这个小站上。
+        </p>
+        <p style="color:var(--text2);line-height:1.9;font-size:14px;margin-bottom:20px">
+          🎯 我同时学习前端、Python 和 Java，探索游戏开发与 AI 应用的可能性，相信技术能让想象成为现实。
+        </p>
+        <p style="color:var(--text2);line-height:1.9;font-size:14px">
+          🎨 业余时间也喜欢板绘创作，用画笔表达脑海中的奇妙世界。
+        </p>
       </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/04/05/hello-world/">Hello World</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/04/05/hello-world/">
-          
-          
-            
-          
-          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-04-05 13:33" pubdate>
-              2021-04-05
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/02/Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Markdown基础语法</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/02/Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
-          
-          
-            
-          
-          来源：1.Markdown语法说明(简体中文)2.Markdown 教程|菜鸟教程Markdown标题Markdown段落格式Markdown列表Markdown区块Markdown代码Markdown链接Markdown图片Markdown表格Markdown高级技巧
-Markdow标题
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-02 11:26" pubdate>
-              2020-07-02
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/02/Python%E4%B8%AD%E7%9A%84turtle%E5%BA%93%E7%89%B9%E5%88%AB%E6%A1%88%E4%BE%8B/">Python中的turtle库特别案例</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/02/Python%E4%B8%AD%E7%9A%84turtle%E5%BA%93%E7%89%B9%E5%88%AB%E6%A1%88%E4%BE%8B/">
-          
-          
-            
-          
-          Turtle的介绍Turtle库是Python语言中一个很流行的绘制图像的函数库，想象一个小乌龟，在一个横轴为x、纵轴为y的坐标系原点，(0,0)位置开始，它根据一组函数指令的控制，在这个平面坐标系中移动，从而在它爬行的路径上绘制了图形。
-Turtle方法官方文档官方文档7月 01, 2020离线版csdn优秀课程
-精彩实例1.树、、、from turtle import *from random
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-02 00:33" pubdate>
-              2020-07-02
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2020/07/01/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">第一篇博客</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2020/07/01/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">
-          
-          
-            
-          
-          个人学习记录博客
-现阶段主要学习Python、Java、前端
-项目尝试发到个人博客和B站，源码上传到Github.
-
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2020-07-01 10:39" pubdate>
-              2020-07-01
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-
-
-
-
-              </div>
-            </div>
-          </div>
+      <div class="timeline fade-in">
+        <div class="tl-item">
+          <div class="tl-date">2020年7月</div>
+          <div class="tl-title">🚀 博客正式启动</div>
+          <div class="tl-desc">写下第一篇博客，开始系统记录 Python、Java 和前端的学习历程。</div>
         </div>
-      </div>
-    
-
-    
-      <a id="scroll-top-button" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
+        <div class="tl-item">
+          <div class="tl-date">2020年7月</div>
+          <div class="tl-title">📝 技术文章沉淀</div>
+          <div class="tl-desc">整理 Markdown 语法与 Python turtle 库案例，开始系统化输出技术内容。</div>
         </div>
-        <div class="list-group" id="local-search-result"></div>
+        <div class="tl-item">
+          <div class="tl-date">2021年4月</div>
+          <div class="tl-title">🎨 跨界探索板绘</div>
+          <div class="tl-desc">整理 B 站板绘学习资源，探索数字艺术创作，拓展技术之外的兴趣边界。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">持续进行中</div>
+          <div class="tl-title">⚡ 独立项目开发</div>
+          <div class="tl-desc">游戏开发、AI 工具、移动端应用……把每一个想法变成代码，让创意落地。</div>
+        </div>
       </div>
     </div>
+  </section>
+
+</main>
+
+<!-- ─── 联系 ─── -->
+<div class="contact-section">
+  <h2>📬 <span style="background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">联系我</span></h2>
+  <p>有想法？有问题？随时来聊 ✨</p>
+  <div class="social-links">
+    <a class="social-link" href="https://github.com/dongfangzi" target="_blank">
+      <span class="s-icon">🐙</span> GitHub
+    </a>
+    <a class="social-link" href="https://dongfangzi.github.io" target="_blank">
+      <span class="s-icon">🌐</span> 博客原站
+    </a>
+    <a class="social-link" href="javascript:void(0)" onclick="showToast('📧 邮箱功能即将开放~')">
+      <span class="s-icon">📧</span> 发送邮件
+    </a>
+    <a class="social-link" href="javascript:void(0)" onclick="showToast('📺 B站账号整理中~')">
+      <span class="s-icon">📺</span> B 站
+    </a>
   </div>
 </div>
-    
 
-    
-  </main>
-
-  <footer class="text-center mt-5 py-3">
-  <div class="footer-content">
-     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
-  </div>
-  
-  <div class="statistics">
-    
-    
-
-    
-      
-        <!-- 不蒜子统计PV -->
-        <span id="busuanzi_container_site_pv" style="display: none">
-            总访问量 
-            <span id="busuanzi_value_site_pv"></span>
-             次
-          </span>
-      
-      
-        <!-- 不蒜子统计UV -->
-        <span id="busuanzi_container_site_uv" style="display: none">
-            总访客数 
-            <span id="busuanzi_value_site_uv"></span>
-             人
-          </span>
-      
-    
-  </div>
-
-
-  
-
-  
+<!-- Footer -->
+<footer>
+  <p>© 2020–2026 <a href="https://dongfangzi.github.io">东方紫小站</a> · 基于 Hexo + Fluid 主题构建 · Made with ❤️ by 东方紫</p>
 </footer>
 
+<!-- 回到顶部 -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
 
-  <!-- SCRIPTS -->
-  
-  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
+<!-- Toast -->
+<div id="toast"></div>
 
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
+<!-- ═══════════════════════════════════════════
+     JavaScript
+═══════════════════════════════════════════ -->
+<script>
+/* ─── 星空背景 ─── */
+(function(){
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [], W, H, animId;
 
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
 
-<script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
-
-
-
-  
-
-
-
-
-
-
-
-
-
-  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js" ></script>
-
-
-
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
-
-
-
-
-  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var title = document.getElementById('subtitle').title;
-      
-      $.ajax({
-        type: 'GET',
-        url: 'https://v2.jinrishici.com/sentence',
-        headers: {"X-User-Token:deosnCCyc0PRBCK9fCpNX7momCruadIe":null},
-        dataType: 'json',
-        success: function (result) {
-          var text;
-          if (result) {
-            var keys = 'data,content'.split('.')
-            if (result instanceof Array) {
-              result = result[0]
-            }
-            for (const k of keys) {
-              var value = result[k]
-              if (typeof value === 'string') {
-                text = value
-                break
-              } else if (value instanceof Object) {
-                result = value
-              }
-            }
-          }
-          text ? typing(text) : typing(title);
-        },
-        error: function () {
-          typing(title)
-        }
-      })
-      
-    })(window, document);
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    (function () {
-      var path = "/local-search.xml";
-      $('#local-search-input').on('click', function() {
-        searchFunc(path, 'local-search-input', 'local-search-result');
+  function initStars(){
+    stars = [];
+    for(let i=0;i<200;i++){
+      stars.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: Math.random()*1.5+0.3,
+        a: Math.random(),
+        speed: Math.random()*0.003+0.001,
+        dx: (Math.random()-0.5)*0.15,
+        dy: (Math.random()-0.5)*0.15
       });
-      $('#modalSearch').on('shown.bs.modal', function() {
-        $('#local-search-input').focus();
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a += s.speed;
+      if(s.a>1) s.a=0;
+      s.x += s.dx; s.y += s.dy;
+      if(s.x<0)s.x=W; if(s.x>W)s.x=0;
+      if(s.y<0)s.y=H; if(s.y>H)s.y=0;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,200,255,${s.a*0.8})`;
+      ctx.fill();
+    });
+    animId = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',()=>{ resize(); initStars(); });
+  resize(); initStars(); draw();
+})();
+
+/* ─── 打字机效果 ─── */
+(function(){
+  const texts = ['全栈开发者 💻','Python 爱好者 🐍','游戏梦想家 🎮','独立创作者 ✨','终身学习者 📚'];
+  let ti=0, ci=0, deleting=false;
+  const el = document.getElementById('typewriter');
+
+  function type(){
+    const cur = texts[ti];
+    if(!deleting){
+      el.textContent = cur.slice(0,++ci);
+      if(ci===cur.length){ deleting=true; setTimeout(type,1800); return; }
+    } else {
+      el.textContent = cur.slice(0,--ci);
+      if(ci===0){ deleting=false; ti=(ti+1)%texts.length; setTimeout(type,400); return; }
+    }
+    setTimeout(type, deleting ? 60 : 110);
+  }
+  setTimeout(type, 800);
+})();
+
+/* ─── 数字滚动动画 ─── */
+function animateCounters(){
+  document.querySelectorAll('.stat-num[data-target]').forEach(el=>{
+    if(el.dataset.special) return;
+    const target = parseInt(el.dataset.target);
+    const start = target > 100 ? target - 200 : 0;
+    const dur = 1500;
+    const step = (target - start) / (dur / 16);
+    let cur = start;
+    const t = setInterval(()=>{
+      cur = Math.min(cur+step, target);
+      el.textContent = Math.round(cur).toLocaleString();
+      if(cur>=target) clearInterval(t);
+    }, 16);
+  });
+}
+
+/* ─── 阅读进度条 ─── */
+window.addEventListener('scroll',()=>{
+  const bar = document.getElementById('progress-bar');
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = Math.min((scrolled/total)*100, 100)+'%';
+
+  // 回到顶部按钮
+  const btn = document.getElementById('back-top');
+  if(scrolled > 400) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
+
+/* ─── Intersection Observer 入场动画 ─── */
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      // 技能条动画
+      entry.target.querySelectorAll('.skill-fill[data-w]').forEach(bar=>{
+        setTimeout(()=>{ bar.style.width = bar.dataset.w+'%'; }, 200);
       });
-    })()
-  </script>
+      // 数字动画（只在统计区触发一次）
+      if(entry.target.classList.contains('stats-row')){
+        animateCounters();
+      }
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
 
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
 
+/* ─── 主题切换 ─── */
+const themeBtn = document.getElementById('theme-btn');
+let isDark = true;
+themeBtn.addEventListener('click',()=>{
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  themeBtn.textContent = isDark ? '🌙' : '☀️';
+  showToast(isDark ? '🌙 已切换深色模式' : '☀️ 已切换浅色模式');
+});
 
+/* ─── 搜索功能 ─── */
+const posts = [
+  { title:'学习板绘资源整理', tags:'绘画 教程 PS SAI Procreate', url:'https://dongfangzi.github.io/2021/04/05/%E5%AD%A6%E4%B9%A0%E6%9D%BF%E7%BB%98/', date:'2021-04-05', icon:'🎨', excerpt:'整理了 B 站板绘教程资源，涵盖多种绘画工具。' },
+  { title:'Hello World',      tags:'Hexo 博客 随笔',               url:'https://dongfangzi.github.io/2021/04/05/hello-world/', date:'2021-04-05', icon:'👋', excerpt:'博客的第一篇示例文章，欢迎来到东方紫小站。' },
+  { title:'Markdown 基础语法', tags:'Markdown 文档 写作',           url:'https://dongfangzi.github.io/2020/07/02/Markdown%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/', date:'2020-07-02', icon:'📝', excerpt:'系统整理 Markdown 常用语法，适合初学者。' },
+  { title:'Python turtle 库特别案例', tags:'Python 编程 图形',     url:'https://dongfangzi.github.io/2020/07/02/Python%E4%B8%AD%E7%9A%84turtle%E5%BA%93%E7%89%B9%E5%88%AB%E6%A1%88%E4%BE%8B/', date:'2020-07-02', icon:'🐢', excerpt:'Python turtle 图形库入门与进阶案例演示。' },
+  { title:'第一篇博客',        tags:'随笔 开始 Python Java 前端',   url:'https://dongfangzi.github.io/2020/07/01/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/', date:'2020-07-01', icon:'🌟', excerpt:'记录学习历程的开篇，分享技术与成长。' },
+];
 
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
 
+function doSearch(q){
+  q = q.trim().toLowerCase();
+  if(!q){ searchResults.style.display='none'; return; }
 
+  const matched = posts.filter(p=>
+    p.title.toLowerCase().includes(q) ||
+    p.tags.toLowerCase().includes(q) ||
+    p.excerpt.toLowerCase().includes(q)
+  );
 
+  if(matched.length===0){
+    searchResults.innerHTML=`<div class="search-empty">😕 没有找到"${q}"相关的文章</div>`;
+  } else {
+    searchResults.innerHTML = matched.map(p=>`
+      <div class="search-result-item" onclick="window.open('${p.url}')">
+        <h4>${p.icon} ${highlight(p.title,q)}</h4>
+        <p>${highlight(p.excerpt,q)} · ${p.date}</p>
+      </div>
+    `).join('');
+  }
+  searchResults.style.display='block';
+}
 
+function highlight(text, q){
+  if(!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re,'<span class="match">$1</span>');
+}
 
+searchInput.addEventListener('input', e=>doSearch(e.target.value));
+searchInput.addEventListener('keydown', e=>{ if(e.key==='Escape'){ searchResults.style.display='none'; searchInput.blur(); } });
+document.addEventListener('click', e=>{ if(!e.target.closest('.search-wrap')&&!e.target.closest('#search-results')) searchResults.style.display='none'; });
 
+/* ─── Toast 通知 ─── */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+window.showToast = showToast;
+</script>
 
-
-
-
-
-<!-- 主题的启动项 保持在最底部 -->
-<script  src="/js/boot.js" ></script>
-
-
-<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</body>
 </html>
